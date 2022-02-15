@@ -1,5 +1,5 @@
 # Do not modify this file
-
+import os
 
 def get_table_from_file(file_name):
     """
@@ -12,7 +12,7 @@ def get_table_from_file(file_name):
     Returns:
          list: List of lists read from a file.
     """
-    with open(file_name, "r") as file:
+    with open(file_name) as file:
         lines = file.readlines()
     table = [element.replace("\n", "").split(";") for element in lines]
     return table

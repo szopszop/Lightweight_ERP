@@ -16,9 +16,13 @@ import ui
 import data_manager
 # common module
 import common
+import os
+from pathlib import Path
 
+file_name = 'games.csv'
 
 def start_module():
+
     """
     Starts this module and displays its menu.
      * User can access default special features from here.
@@ -27,7 +31,35 @@ def start_module():
     Returns:
         None
     """
+    print('Store manager')
 
+    print(' (1) Show table')
+    print(' (2) Add new record')
+    print(' (3) Remove record')
+    print(' (4) Update record')
+    print(' (5) Show how many kinds of records are available of each manufacturer')
+    print(' (6) Show the average amount of games in stock of a given manufacturer')
+    print(' (0) Back to main menu')
+    user_input = input(': ')
+
+    table = data_manager.get_table_from_file(str(Path(__file__).parent.absolute())+ '\\'+ file_name)
+    manufacturer = table[3]
+    id_ = 'nic' #TODO
+
+    if user_input == '1':
+        show_table(table)
+    if user_input == 2:
+        add(table)
+    if user_input == 3:
+        remove(table, id_)
+    if user_input == 4:
+        update(table, id_)
+    if user_input == 5:
+        get_counts_by_manufacturers(table)
+    if user_input == 6:
+        get_average_by_manufacturer(table, manufacturer)
+    if user_input == 0:
+        ui.print_menu()
     # your code
 
 
@@ -42,7 +74,10 @@ def show_table(table):
         None
     """
 
-    # your code
+    path = (str(Path(__file__).parent.absolute()) + '\\' + file_name)
+    table = data_manager.get_table_from_file(path)
+    print(table)
+
 
 
 def add(table):

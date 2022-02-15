@@ -6,7 +6,7 @@ def print_table(table, title_list):
     Prints table with data.
 
     Example:
-        /-----------------------------------\
+        /-----------------------------------\\
         |   id   |      title     |  type   |
         |--------|----------------|---------|
         |   0    | Counter strike |    fps  |
@@ -60,7 +60,10 @@ def print_menu(title, list_options, exit_message):
     Returns:
         None: This function doesn't return anything it only prints to console.
     """
-
+    print(title)
+    for index, option in enumerate(list_options):
+        print(f"    ({index+1}) {option}")
+    print('    (0) ', exit_message)
     # your code
 
 
@@ -84,8 +87,9 @@ def get_inputs(list_labels, title):
             [<user_input_1>, <user_input_2>, <user_input_3>]
     """
     inputs = []
-
-    # your code
+    for label in list_labels:
+        user_input = input(label)
+    inputs.append(user_input)
 
     return inputs
 
