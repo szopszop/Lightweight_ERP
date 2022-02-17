@@ -19,49 +19,61 @@ import common
 import os
 from pathlib import Path
 
+ID = 0
+TITLE = 1
+MANUFACTURER = 2
+PRICE = 3
+IN_STOCK = 4
+
 file_name = 'games.csv'
+title_list = ["Id", "Title", "Manufacturer", "Price", "In stock"]
 
 def start_module():
-
-    """
-    Starts this module and displays its menu.
-     * User can access default special features from here.
-     * User can go back to main menu from here.
-
-    Returns:
-        None
-    """
-    print('Store manager')
-
-    print(' (1) Show table')
-    print(' (2) Add new record')
-    print(' (3) Remove record')
-    print(' (4) Update record')
-    print(' (5) Show how many kinds of records are available of each manufacturer')
-    print(' (6) Show the average amount of games in stock of a given manufacturer')
-    print(' (0) Back to main menu')
-    user_input = input(': ')
-
     table = data_manager.get_table_from_file(str(Path(__file__).parent.absolute())+ '\\'+ file_name)
-    manufacturer = table[3]
-    id_ = 'nic' #TODO
 
-    if user_input == '1':
-        show_table(table)
-    if user_input == 2:
-        add(table)
-    if user_input == 3:
-        remove(table, id_)
-    if user_input == 4:
-        update(table, id_)
-    if user_input == 5:
-        get_counts_by_manufacturers(table)
-    if user_input == 6:
-        get_average_by_manufacturer(table, manufacturer)
-    if user_input == 0:
-        ui.print_menu()
-    # your code
+    options = ["Display a table",
+               "Add new record",
+               "Remove record",
+               "Update record",
+               "Show how many different kinds of game are available of each manufacturer",
+               "Show the average amount of games in stock of a given manufacturer"]
 
+    while True:
+        try:
+            ui.print_menu("Store Manager", options, "Back to main menu")
+            inputs = ui.get_inputs(["Please enter a number: "], "")
+            option = inputs[0]
+            if option == "1":
+                show_table(table)
+                continue
+            elif option == "2":
+                add(table)
+                data_manager.write_table_to_file(file_name, table)
+                continue
+            elif option == "3":
+                remove(table, id_=ui.get_inputs(["Please enter: "], title_list[ID]))
+                data_manager.write_table_to_file(file_name, table)
+                continue
+            elif option == "4":
+                update(table, id_=ui.get_inputs(["Please enter: "], title_list[ID]))
+                data_manager.write_table_to_file(file_name, table)
+                continue
+            elif option == "5":
+                get_counts_by_manufacturers(table)
+                continue
+            elif option == "6":
+                get_average_by_manufacturer(
+                    table,
+                    manufacturer=ui.get_inputs(["Please enter: "], title_list[MANUFACTURER])
+                )
+                continue
+            elif option == "0":
+                break
+            else:
+                raise KeyError("There is no such option.")
+        except KeyError as err:
+            ui.print_error_message(str(err))
+ 
 
 def show_table(table):
     """
@@ -76,8 +88,8 @@ def show_table(table):
 
     path = (str(Path(__file__).parent.absolute()) + '\\' + file_name)
     table = data_manager.get_table_from_file(path)
-    print(table)
-
+    global title_list
+    ui.print_table(table, title_list)
 
 
 def add(table):
@@ -91,8 +103,9 @@ def add(table):
         list: Table with a new record
     """
 
-    # your code
-
+    #global title_list
+    table = common.add_item(table, title_list)
+    ui.print_table(table, title_list)
     return table
 
 
@@ -107,9 +120,7 @@ def remove(table, id_):
     Returns:
         list: Table without specified record.
     """
-
-    # your code
-
+    table = common.remove_item(table, id_)
     return table
 
 
@@ -126,7 +137,8 @@ def update(table, id_):
     """
 
     # your code
-
+    global title_list
+    table = common.update_item(table, title_list, id_)
     return table
 
 
@@ -143,8 +155,14 @@ def get_counts_by_manufacturers(table):
     Returns:
          dict: A dictionary with this structure: { [manufacturer] : [count] }
     """
+    all_manufacturers = list()
+    manufacturers = set()
+    manufacturers_count = dict()
+       
 
-    # your code
+
+
+
 
 
 def get_average_by_manufacturer(table, manufacturer):

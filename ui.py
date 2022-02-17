@@ -21,9 +21,23 @@ def print_table(table, title_list):
     Returns:
         None: This function doesn't return anything it only prints to console.
     """
-
-    # your goes code
-
+    print()
+    if len(title_list) == 3:
+        print("{:<10} {:<30} {:<8}".format(*title_list))
+        for line in table:
+            print("{:<10} {:<30} {:<8}".format(*line))
+    if len(title_list) == 4:
+        print("{:<10} {:<30} {:<35} {:<10}".format(*title_list))
+        for line in table:
+            print("{:<10} {:<30} {:35} {:<10}".format(*line))
+    if len(title_list) == 5:
+        print("{:<10} {:<40} {:<40} {:<15} {:<15}".format(*title_list))
+        for line in table:
+            print("{:<10} {:<40} {:40} {:<15} {:<15}".format(*line))
+    if len(title_list) == 6:
+        print("{:<10} {:<40} {:<10} {:<10} {:<10} {:<15}".format(*title_list))
+        for line in table:
+            print("{:<10} {:<40} {:<10} {:<10} {:<10} {:<15}".format(*line))
 
 def print_result(result, label):
     """
@@ -60,11 +74,12 @@ def print_menu(title, list_options, exit_message):
     Returns:
         None: This function doesn't return anything it only prints to console.
     """
+    print()
     print(title)
     for index, option in enumerate(list_options):
         print(f"    ({index+1}) {option}")
     print('    (0) ', exit_message)
-    # your code
+
 
 
 def get_inputs(list_labels, title):
@@ -87,8 +102,8 @@ def get_inputs(list_labels, title):
             [<user_input_1>, <user_input_2>, <user_input_3>]
     """
     inputs = []
-    for label in list_labels:
-        user_input = input(label)
+    for title in list_labels:
+        user_input = input(title)
     inputs.append(user_input)
 
     return inputs
