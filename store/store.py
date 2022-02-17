@@ -136,9 +136,10 @@ def update(table, id_):
         list: table with updated record
     """
 
-    # your code
     global title_list
     table = common.update_item(table, title_list, id_)
+    ui.print_table(table, title_list)
+
     return table
 
 
@@ -159,10 +160,20 @@ def get_counts_by_manufacturers(table):
     manufacturers = set()
     manufacturers_count = dict()
        
+    for line in table:
+        all_manufacturers.append(line[MANUFACTURER])
+        manufacturers.add(line[MANUFACTURER])
 
+    for i in manufacturers:
+        counter = 0
+        for line in table:
+            if i == line[MANUFACTURER]:
+                counter += 1
+        manufacturers_count[i] = counter
 
-
-
+    label = 'Games counted by manufacturers'
+    ui.print_result(manufacturers_count, label)
+    return manufacturers_count
 
 
 def get_average_by_manufacturer(table, manufacturer):
@@ -176,5 +187,5 @@ def get_average_by_manufacturer(table, manufacturer):
     Returns:
          number
     """
+    
 
-    # your code
