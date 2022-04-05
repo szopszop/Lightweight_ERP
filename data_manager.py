@@ -1,5 +1,5 @@
 # Do not modify this file
-import os
+
 
 def get_table_from_file(file_name):
     """

@@ -17,7 +17,7 @@ import ui
 import data_manager
 # common module
 import common
-from pathlib import Path
+
 
 ID = 0
 TITLE = 1
@@ -27,7 +27,6 @@ DAY = 4
 YEAR = 5
 title_list = ["Id", "Title", "Price", "Month", "Day", "Year"]
 
-file_name = 'sales.csv'
 
 def start_module():
     """
@@ -38,15 +37,15 @@ def start_module():
     Returns:
         None
     """
-    table = data_manager.get_table_from_file(str(Path(__file__).parent.absolute())+ '\\'+ file_name)
 
+    file_name = "sales/sales.csv"
+    table = data_manager.get_table_from_file(file_name)
     options = ["Display a table",
                "Add new record",
                "Remove record",
                "Update record",
                "Show the id of the item that was sold for the lowest price",
                "Show the items that are sold between two given dates"]
-
     while True:
         try:
             ui.print_menu("Human resources manager", options, "Back to main menu")
@@ -80,7 +79,7 @@ def start_module():
                     day_to=int(ui.get_inputs(["Please enter: "], title_list[DAY])[0]),
                     year_to=int(ui.get_inputs(["Please enter: "], title_list[YEAR])[0])
                 )
-                continue   
+                continue
             elif option == "0":
                 break
             else:
@@ -100,10 +99,7 @@ def show_table(table):
         None
     """
 
-    global title_list
     ui.print_table(table, title_list)
-
-    # your code
 
 
 def add(table):
@@ -117,8 +113,7 @@ def add(table):
         list: Table with a new record
     """
 
-    # your code
-
+    table = common.add_item(table, title_list)
     return table
 
 
@@ -134,10 +129,7 @@ def remove(table, id_):
         list: Table without specified record.
     """
 
-    # your code
-
     table = common.remove_item(table, id_)
-
     return table
 
 
@@ -153,7 +145,6 @@ def update(table, id_):
         list: table with updated record
     """
 
-    global title_list
     table = common.update_item(table, title_list, id_)
 
     return table
@@ -174,7 +165,17 @@ def get_lowest_price_item_id(table):
          string: id
     """
 
-    # your code
+    prices_list = list()
+    for line in table:
+        prices_list.append(line[PRICE])
+    lowest_price = common.min(prices_list)
+    for line in table:
+        if lowest_price == line[PRICE]:
+            id_ = line[ID]
+            break
+    label = 'ID of the item that was sold for the lowest price'
+    ui.print_result(id_, label)
+    return id_
 
 
 def get_items_sold_between(table, month_from, day_from, year_from, month_to, day_to, year_to):
@@ -194,4 +195,18 @@ def get_items_sold_between(table, month_from, day_from, year_from, month_to, day
         list: list of lists (the filtered table)
     """
 
-    # your code
+    filtered_list = list()
+    timestamp_from = (month_from * 2629743) + (day_from * 86400) + (year_from * 31556926)
+    timestamp_to = (month_to * 2629743) + (day_to * 86400) + (year_to * 31556926)
+    for line in table:
+        table_timestamp = (int(line[MONTH]) * 2629743) + (int(line[DAY]) * 86400) + (int(line[YEAR]) * 31556926)
+        if timestamp_from < table_timestamp < timestamp_to:
+            filtered_list.append(line)
+    for value in filtered_list:
+        value[PRICE] = int(value[PRICE])
+        value[MONTH] = int(value[MONTH])
+        value[DAY] = int(value[DAY])
+        value[YEAR] = int(value[YEAR])
+    label = 'Items sold between two given dates'
+    ui.print_result(filtered_list, label)
+    return filtered_list

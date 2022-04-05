@@ -15,6 +15,7 @@ from sales import sales
 # Customer Relationship Management (CRM) module
 from crm import crm
 
+from pathlib import Path
 
 def compare_lists(tester, expected_list, result_list):
     if len(expected_list) == 0 and len(result_list) == 0:
@@ -197,10 +198,10 @@ class SalesTester(unittest.TestCase):
 
 
 class StoreTester(unittest.TestCase):
-    data_file = "store/games_test.csv"
+    data_file = (str(Path(__file__).parent.absolute())+ '\\')+ "store/games_test.csv"
 
     def test_forbidden_functions(self):
-        check_forbidden_functions(self, "store/store.py")
+        check_forbidden_functions(self, (str(Path(__file__).parent.absolute())+ '\\')+ "store/store.py")
 
     def test_get_counts_by_manufacturers(self):
         table = data_manager.get_table_from_file(self.data_file)

@@ -24,11 +24,10 @@ TITLE = 1
 MANUFACTURER = 2
 PRICE = 3
 IN_STOCK = 4
-
-file_name = 'games.csv'
 title_list = ["Id", "Title", "Manufacturer", "Price", "In stock"]
 
 def start_module():
+    file_name = 'games.csv'
     table = data_manager.get_table_from_file(str(Path(__file__).parent.absolute())+ '\\'+ file_name)
 
     options = ["Display a table",
@@ -51,8 +50,8 @@ def start_module():
                 data_manager.write_table_to_file(file_name, table)
                 continue
             elif option == "3":
-                remove(table, id_=ui.get_inputs(["Please enter: "], title_list[ID]))
-                data_manager.write_table_to_file(file_name, table)
+                updated_table = remove(table, id_=ui.get_inputs(["Please enter: "], title_list[ID]))
+                data_manager.write_table_to_file(file_name, updated_table)
                 continue
             elif option == "4":
                 update(table, id_=ui.get_inputs(["Please enter: "], title_list[ID]))
@@ -86,9 +85,9 @@ def show_table(table):
         None
     """
 
-    path = (str(Path(__file__).parent.absolute()) + '\\' + file_name)
-    table = data_manager.get_table_from_file(path)
-    global title_list
+    # path = (str(Path(__file__).parent.absolute()) + '\\' + file_name)
+    # table = data_manager.get_table_from_file(path)
+    # global title_list
     ui.print_table(table, title_list)
 
 
@@ -105,7 +104,7 @@ def add(table):
 
     #global title_list
     table = common.add_item(table, title_list)
-    ui.print_table(table, title_list)
+    # ui.print_table(table, title_list)
     return table
 
 
@@ -121,6 +120,7 @@ def remove(table, id_):
         list: Table without specified record.
     """
     table = common.remove_item(table, id_)
+    
     return table
 
 
@@ -136,7 +136,7 @@ def update(table, id_):
         list: table with updated record
     """
 
-    global title_list
+    #global title_list
     table = common.update_item(table, title_list, id_)
     ui.print_table(table, title_list)
 
@@ -187,5 +187,16 @@ def get_average_by_manufacturer(table, manufacturer):
     Returns:
          number
     """
+    amount_of_games = 0
+    manufacturer = ''.join(manufacturer)
+    counter = 0
+    for line in table:
+        if line[MANUFACTURER] == manufacturer:
+            counter += 1
+            amount_of_games += int(line[IN_STOCK])
     
+    average = amount_of_games / counter
+    print(average)
+
+
 

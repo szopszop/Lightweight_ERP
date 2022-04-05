@@ -16,6 +16,12 @@ import data_manager
 import common
 
 
+ID = 0
+NAME = 1
+BIRTH_YEAR = 2
+title_list = ["Id", "Name", "Birth Year"]
+
+
 def start_module():
     """
     Starts this module and displays its menu.
@@ -25,8 +31,48 @@ def start_module():
     Returns:
         None
     """
+    file_name = "hr/persons.csv"
+    table = data_manager.get_table_from_file(file_name)
 
-    # your code
+    options = ["Display a table",
+               "Add new record",
+               "Remove record",
+               "Update record",
+               "Show the oldest person",
+               "Show the closest to the average age"]
+
+    while True:
+        try:
+            ui.print_menu("Human resources manager", options, "Back to main menu")
+            inputs = ui.get_inputs(["Please enter a number: "], "")
+            option = inputs[0]
+            if option == "1":
+                show_table(table)
+                continue
+            elif option == "2":
+                add(table)
+                data_manager.write_table_to_file(file_name, table)
+                continue
+            elif option == "3":
+                remove(table, id_=ui.get_inputs(["Please enter: "], title_list[ID]))
+                data_manager.write_table_to_file(file_name, table)
+                continue
+            elif option == "4":
+                update(table, id_=ui.get_inputs(["Please enter: "], title_list[ID]))
+                data_manager.write_table_to_file(file_name, table)
+                continue
+            elif option == "5":
+                get_oldest_person(table)
+                continue
+            elif option == "6":
+                get_persons_closest_to_average(table)
+                continue
+            elif option == "0":
+                break
+            else:
+                raise KeyError("There is no such option.")
+        except KeyError as err:
+            ui.print_error_message(str(err))
 
 
 def show_table(table):
@@ -40,7 +86,7 @@ def show_table(table):
         None
     """
 
-    # your code
+    ui.print_table(table, title_list)
 
 
 def add(table):
@@ -54,8 +100,7 @@ def add(table):
         list: Table with a new record
     """
 
-    # your code
-
+    table = common.add_item(table, title_list)
     return table
 
 
@@ -71,8 +116,7 @@ def remove(table, id_):
         list: Table without specified record.
     """
 
-    # your code
-
+    table = common.remove_item(table, id_)
     return table
 
 
@@ -88,8 +132,7 @@ def update(table, id_):
         list: table with updated record
     """
 
-    # your code
-
+    table = common.update_item(table, title_list, id_)
     return table
 
 
@@ -107,7 +150,17 @@ def get_oldest_person(table):
         list: A list of strings (name or names if there are two more with the same value)
     """
 
-    # your code
+    birth_year_list = list()
+    oldest_persons = list()
+    for line in table:
+        birth_year_list.append(line[BIRTH_YEAR])
+    oldest_year = common.min(birth_year_list)
+    for line in table:
+        if oldest_year == line[BIRTH_YEAR]:
+            oldest_persons.append(line[NAME])
+    label = 'Oldest (person/persons) (is/are)'
+    ui.print_result(oldest_persons, label)
+    return oldest_persons
 
 
 def get_persons_closest_to_average(table):
@@ -121,4 +174,17 @@ def get_persons_closest_to_average(table):
         list: list of strings (name or names if there are two more with the same value)
     """
 
-    # your code
+    birth_year_list = list()
+    sum_of_years = 0
+    person_closest_to_avarage = list()
+    for line in table:
+        birth_year_list.append(line[BIRTH_YEAR])
+    for year in birth_year_list:
+        sum_of_years += int(year)
+    average_birth_year = sum_of_years // len(birth_year_list)
+    for line in table:
+        if str(average_birth_year - 1) == line[BIRTH_YEAR] or str(average_birth_year + 1) == line[BIRTH_YEAR]:
+            person_closest_to_avarage.append(line[NAME])
+    label = '(Person/persons) closest to the average age (is/are)'
+    ui.print_result(person_closest_to_avarage, label)
+    return person_closest_to_avarage

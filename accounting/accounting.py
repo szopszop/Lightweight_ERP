@@ -1,13 +1,11 @@
-""" Accounting module
+""" Customer Relationship Management (CRM) module
 
 Data table structure:
     * id (string): Unique and random generated identifier
         at least 2 special characters (except: ';'), 2 number, 2 lower and 2 upper case letters)
-    * month (number): Month of the transaction
-    * day (number): Day of the transaction
-    * year (number): Year of the transaction
-    * type (string): in = income, out = outflow
-    * amount (int): amount of transaction in USD
+    * name (string)
+    * email (string)
+    * subscribed (int): Is she/he subscribed to the newsletter? 1/0 = yes/no
 """
 
 # everything you'll need is imported:
@@ -17,6 +15,13 @@ import ui
 import data_manager
 # common module
 import common
+
+
+ID = 0
+NAME = 1
+EMAIL = 2
+SUBSCRIBED = 3
+title_list = ["Id", "Name", "Email", "Subscribed"]
 
 
 def start_module():
@@ -29,7 +34,48 @@ def start_module():
         None
     """
 
-    # your code
+    file_name = "crm/customers.csv"
+    table = data_manager.get_table_from_file(file_name)
+
+    options = ["Display a table",
+               "Add new record",
+               "Remove record",
+               "Update record",
+               "Show the id of the customer with the longest name",
+               "Show the customers that has subscribed to the newsletter"]
+
+    while True:
+        try:
+            ui.print_menu("Human resources manager", options, "Back to main menu")
+            inputs = ui.get_inputs(["Please enter a number: "], "")
+            option = inputs[0]
+            if option == "1":
+                show_table(table)
+                continue
+            elif option == "2":
+                add(table)
+                data_manager.write_table_to_file(file_name, table)
+                continue
+            elif option == "3":
+                remove(table, id_=ui.get_inputs(["Please enter: "], title_list[ID]))
+                data_manager.write_table_to_file(file_name, table)
+                continue
+            elif option == "4":
+                update(table, id_=ui.get_inputs(["Please enter: "], title_list[ID]))
+                data_manager.write_table_to_file(file_name, table)
+                continue
+            elif option == "5":
+                get_longest_name_id(table)
+                continue
+            elif option == "6":
+                get_subscribed_emails(table)
+                continue
+            elif option == "0":
+                break
+            else:
+                raise KeyError("There is no such option.")
+        except KeyError as err:
+            ui.print_error_message(str(err))
 
 
 def show_table(table):
@@ -43,7 +89,8 @@ def show_table(table):
         None
     """
 
-    # your code
+    global title_list
+    ui.print_table(table, title_list)
 
 
 def add(table):
@@ -57,7 +104,7 @@ def add(table):
         list: Table with a new record
     """
 
-    # your code
+    table = common.add_item(table, title_list)
 
     return table
 
@@ -74,8 +121,7 @@ def remove(table, id_):
         list: Table without specified record.
     """
 
-    # your code
-
+    table = common.remove_item(table, id_)
     return table
 
 
@@ -91,38 +137,68 @@ def update(table, id_):
         list: table with updated record
     """
 
-    # your code
-
+    table = common.update_item(table, title_list, id_)
     return table
 
 
 # special functions:
 # ------------------
 
-def which_year_max(table):
+def get_longest_name_id(table):
     """
-    Question: Which year has the highest profit? (profit = in - out)
+        Question: What is the id of the customer with the longest name?
 
-    Args:
-        table (list): data table to work on
+        Args:
+            table (list): data table to work on
 
-    Returns:
-        number
+        Returns:
+            string: id of the longest name (if there are more than one, return
+                the last by alphabetical order of the names)
+        """
+
+    len_names_list = list()
+    for line in table:
+        len_names_list.append(len(line[NAME]))
+    longest = common.max(len_names_list)
+    list_of_id = list()
+    for line in table:
+        if longest == len(line[NAME]):
+            id_ = line[ID]
+            list_of_id.append(id_)
+    longest_names = list()
+    for id_ in list_of_id:
+        for line in table:
+            if id_ == line[ID]:
+                longest_names.append(line[NAME])
+    longest_name = common.max(longest_names)
+    for line in table:
+        if longest_name == line[NAME]:
+            id_ = line[ID]
+            break
+
+    label = 'ID of the customer with the longest name'
+    ui.print_result(id_, label)
+    return id_
+
+
+# the question: Which customers has subscribed to the newsletter?
+# return type: list of strings (where string is like email+separator+name, separator=";")
+def get_subscribed_emails(table):
     """
+        Question: Which customers has subscribed to the newsletter?
 
-    # your code
+        Args:
+            table (list): data table to work on
 
+        Returns:
+            list: list of strings (where a string is like "email;name")
+        """
 
-def avg_amount(table, year):
-    """
-    Question: What is the average (per item) profit in a given year? [(profit)/(items count)]
+    list_of_subscribers = list()
+    for line in table:
+        if int(line[SUBSCRIBED]) == 1:
+            list_of_subscribers.append(line[EMAIL] + ';' + line[NAME])
 
-    Args:
-        table (list): data table to work on
-        year (number)
-
-    Returns:
-        number
-    """
-
-    # your code
+    label = 'Customers subscribed to the newsletter'
+    ui.print_result(list_of_subscribers, label)
+    return list_of_subscribers

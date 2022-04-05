@@ -57,10 +57,15 @@ def add_item(table, title_list):
 
 
 def remove_item(table, id_):
-    for index, id_ in enumerate(table):
-        if id_ in table[ID]: 
-            removed =table[index].pop()
-            print(removed)
+    id_ = ''.join(id_)
+    line_counter = 0
+    for line in table:
+        if id_ == line[ID]:
+            del table[line_counter]
+            break
+        line_counter += 1
+
+    return table
 
 
 def update_item(table, title_list, id_):
